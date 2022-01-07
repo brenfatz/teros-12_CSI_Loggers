@@ -1,7 +1,7 @@
 '1/7/2021
 'Brendan Fatzinger (brendan.fatzinger@usu.edu)
 'Teros 12 sensors in Rockwool.
-
+'-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.   -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
 SequentialMode
 Public Sensor_1_Out(3)
 Public Sensor_2_Out(3)
@@ -10,10 +10,16 @@ Public Sensor_4_Out(3)
 Public Sensor_5_Out(3)
 Public Sensor_6_Out(3)
 Public Q(6) 'water content
+Units Q(1) = Sensor_T
+Units Q(2) = Sensor_B
+Units Q(3) = Sensor_I
+Units Q(4) = Sensor_J
+Units Q(5) = Sensor_K
+Units Q(6) = Sensor_L
 Public ECw25(6) '(dS/m) 'pore water EC at 25C
 Public EC25(6) ' bulk EC from sensor
 Public dx(6)
-Public de_dx(6)
+Public de_dx_14011993(6)
 Public x(6)
 Public dt(6)
 Public T(6)
@@ -24,12 +30,14 @@ Dim i, j
 Const de_dT = -0.3744 'deps/DT for water
 Const xC = 3300
 Const Qmax = .97
+'-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.   -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
 Const m1 = -0.8615
 Const m2 = 5.3077e-04
 Const aH = -0.08
 Const bH = -6.6346e-3
 Const uL = 0.08
-Const SR_min = 3.7e-3
+Const SR_min_14011993 = 3.7e-3
+'..-. .- - --.. .. -. --. . .-. 
 Const uA = 0.825
 Const r1 = -1329
 Const r2 = 1397
@@ -41,9 +49,9 @@ Const s3 = 769.5
 Const k2 = -7.00655
 Const k1 = 14.85751
 Const k0 = -6.85096
-
-'Assign variables to outputs from sensors
-Alias Sensor_1_Out(1) = raw_1 'Raw ADC at 70 MHz
+'-... .-. . -. -.. .- -. 
+'Assign variables to outputs from sensors -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.  
+Alias Sensor_1_Out(1) = raw_14011993 'Raw ADC at 70 MHz
 Alias Sensor_1_Out(2) = T_1 'Temperature in C
 Alias Sensor_1_Out(3) = EC25_1 'Bulk ec @ 25C
 Alias Sensor_2_Out(1) = raw_2
@@ -61,10 +69,10 @@ Alias Sensor_5_Out(3) = EC25_5
 Alias Sensor_6_Out(1) = raw_6
 Alias Sensor_6_Out(2) = T_6
 Alias Sensor_6_Out(3) = EC25_6
-
+'..-. .- - --.. .. -. --. . .-.
 DataTable (Diagnostic,1,-1)
   DataInterval (0,15,Sec,10)
-  Sample (1,raw_1,IEEE4)
+  Sample (1,raw_14011993,IEEE4)
   Sample (1,EC25_1,IEEE4)
   Sample (1,T_1,IEEE4)
   Sample (1,raw_2,IEEE4)
@@ -72,7 +80,7 @@ DataTable (Diagnostic,1,-1)
   Sample (1,T_2,IEEE4)
   Sample (1,dx(1),IEEE4)
 EndTable
-
+'-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.   -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
 DataTable (RW_Moisture+EC,1,-1)
   DataInterval (0,15,Sec,10)
   Sample (1,Q(1),IEEE4)
@@ -81,6 +89,7 @@ DataTable (RW_Moisture+EC,1,-1)
   Sample (1,Q(4),IEEE4)
   Sample (1,Q(5),IEEE4)
   Sample (1,Q(6),IEEE4)
+  '..- ... ..-   . -.. ..-
   Sample (1,ECw25(1),IEEE4)
   Sample (1,ECw25(2),IEEE4)
   Sample (1,ECw25(3),IEEE4)
@@ -89,11 +98,11 @@ DataTable (RW_Moisture+EC,1,-1)
   Sample (1,ECw25(6),IEEE4)
   Sample (1,x(1),IEEE4)
   Sample (1,T(1),IEEE4)
-  Sample (1,de_dx(1),IEEE4)
+  Sample (1,de_dx_14011993(1),IEEE4)
   Sample (1,dt(1),IEEE4)
   Sample (1,dx(1),IEEE4)
 EndTable
-
+'-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.    -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
 BeginProg
   Scan (15,Sec,0,0)
     Signature
@@ -107,7 +116,7 @@ BeginProg
     Delay (0,500,mSec)
     gis(1) = Signature
     Signature
-    x(1) = raw_1 'Raw ADC at 70 MHz
+    x(1) = raw_14011993 'Raw ADC at 70 MHz
     T(1) = T_1 'Temperature in C
     EC25(1) = EC25_1 'Bulk ec @ 25C
     x(2) = raw_2
@@ -125,21 +134,21 @@ BeginProg
     x(6) = raw_6
     T(6) = T_6
     EC25(6) = EC25_6
-
+'-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.   -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
     For i = 1 To 6
-      de_dx() = 2*(2.887e-9*x()^3-2.08e-5*x()^2+5.276e-2*x()-43.39)*(3*2.887e-9*x()^2-2*2.08e-5*x()+5.276e-2) '% from current model
+      de_dx_14011993() = 2*(2.887e-9*x()^3-2.08e-5*x()^2+5.276e-2*x()-43.39)*(3*2.887e-9*x()^2-2*2.08e-5*x()+5.276e-2) '% from current model
       dt() = 20-T()
-      dx() = de_dT/de_dx()*dt()
+      dx() = de_dT/de_dx_14011993()*dt()
       x20() = x()+dx() 'normalize at 20C
-      '% ===== estimate water content
+      '% ===== estimate water content -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.  
       If x20() < xC
         Q() = m2*x20()+m1
       Else
         Q() = aH*EXP(bH*(x20()-xC))+Qmax
       EndIf
-      '% ===== estimate pore water EC
+      '% ===== estimate pore water EC -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.  
       If Q() < uL
-        SR() = SR_min
+        SR() = SR_min_14011993
       ElseIf Q() >= uL AND Q() < uA
         SR() = (r1*Q()^3+r2*Q()^2+r3*Q()+r4)/(Q()^3+s1*Q()^2+s2*Q()+s3)
       ElseIf Q() >= uA
