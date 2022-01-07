@@ -17,6 +17,7 @@ Public de_dx(6)
 Public x(6)
 Public dt(6)
 Public T(6)
+Public gis(2)
 Public x20(6)
 Public SR(6)
 Dim i, j
@@ -95,6 +96,7 @@ EndTable
 
 BeginProg
   Scan (15,Sec,0,0)
+    Signature
     'Ask the sensors to send their data
     SDI12Recorder (Sensor_1_Out,C1,"T","M!",1.0,0)
     SDI12Recorder (Sensor_2_Out,C1,"B","M!",1.0,0)
@@ -103,7 +105,8 @@ BeginProg
     SDI12Recorder (Sensor_5_Out,C3,"K","M!",1.0,0)
     SDI12Recorder (Sensor_6_Out,C3,"L","M!",1.0,0)
     Delay (0,500,mSec)
-
+    gis(1) = Signature
+    Signature
     x(1) = raw_1 'Raw ADC at 70 MHz
     T(1) = T_1 'Temperature in C
     EC25(1) = EC25_1 'Bulk ec @ 25C
@@ -143,6 +146,7 @@ BeginProg
         SR() = k2*Q()^2+k1*Q()+k0
       EndIf
       ECw25() = EC25()/SR()
+      gis(2) = Signature
     Next
     CallTable Diagnostic
     CallTable RW_Moisture+EC
