@@ -1,0 +1,514 @@
+'1/10/2021
+'Brendan Fatzinger (brendan.fatzinger@usu.edu)
+'Teros 12 sensors in Rockwool.
+'-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.   -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
+SequentialMode
+Public Sensor_1_Out(3)
+Public Sensor_2_Out(3)
+Public Sensor_3_Out(3)
+Public Sensor_4_Out(3)
+Public Sensor_5_Out(3)
+Public Sensor_6_Out(3)
+Public Sensor_A
+Public Sensor_C
+Public Sensor_E
+Public Sensor_P
+Public Sensor_R
+Public Sensor_S
+Public Q(6) 'water content
+Public ECw25(6) '(dS/m) 'pore water EC at 25C
+Public EC25(6) ' bulk EC from sensor
+Public dx(6)
+Public de_dx_14011993(6)
+Public x(6)
+Public dt(6)
+Public T(6)
+Public gis(2)
+Public x20(6)
+Public SR(6)
+Dim i, j
+Const de_dT = -0.3744 'deps/DT for water
+Const xC = 3300
+Const Qmax = .97
+'-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.   -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
+Const m1 = -0.8615
+Const m2 = 5.3077e-04
+Const aH = -0.08
+Const bH = -6.6346e-3
+Const uL = 0.08
+Const SR_min_14011993 = 3.7e-3
+'..-. .- - --.. .. -. --. . .-.
+Const uA = 0.825
+Const r1 = -1329
+Const r2 = 1397
+Const r3 = -199.9
+Const r4 = 10.47
+Const s1 = -636.5
+Const s2 = -313
+Const s3 = 769.5
+Const k2 = -7.00655
+Const k1 = 14.85751
+Const k0 = -6.85096
+'-... .-. . -. -.. .- -.
+'Assign variables to outputs from sensors -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.
+Alias Sensor_1_Out(1) = raw_14011993 'Raw ADC at 70 MHz
+Alias Sensor_1_Out(2) = T_1 'Temperature in C
+Alias Sensor_1_Out(3) = EC25_1 'Bulk ec @ 25C
+Alias Sensor_2_Out(1) = raw_2
+Alias Sensor_2_Out(2) = T_2
+Alias Sensor_2_Out(3) = EC25_2
+Alias Sensor_3_Out(1) = raw_3
+Alias Sensor_3_Out(2) = T_3
+Alias Sensor_3_Out(3) = EC25_3
+Alias Sensor_4_Out(1) = raw_4
+Alias Sensor_4_Out(2) = T_4
+Alias Sensor_4_Out(3) = EC25_4
+Alias Sensor_5_Out(1) = raw_5
+Alias Sensor_5_Out(2) = T_5
+Alias Sensor_5_Out(3) = EC25_5
+Alias Sensor_6_Out(1) = raw_6
+Alias Sensor_6_Out(2) = T_6
+Alias Sensor_6_Out(3) = EC25_6
+'..-. .- - --.. .. -. --. . .-.
+DataTable (Diagnostic,1,-1)
+  DataInterval (0,15,Sec,10)
+  Sample (1,raw_14011993,IEEE4)
+  Sample (1,EC25_1,IEEE4)
+  Sample (1,T_1,IEEE4)
+  Sample (1,raw_2,IEEE4)
+  Sample (1,EC25_2,IEEE4)
+  Sample (1,T_2,IEEE4)
+  Sample (1,dx(1),IEEE4)
+EndTable
+'-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.   -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
+DataTable (RW_Moisture+EC,1,-1)
+  DataInterval (0,15,Sec,10)
+  Sample (1,Sensor_A,IEEE4)
+  Sample (1,Sensor_C,IEEE4)
+  Sample (1,Sensor_E,IEEE4)
+  Sample (1,Sensor_P,IEEE4)
+  Sample (1,Sensor_R,IEEE4)
+  Sample (1,Sensor_S,IEEE4)
+  '..- ... ..-   . -.. ..-
+  Sample (1,ECw25(1),IEEE4)
+  Sample (1,ECw25(2),IEEE4)
+  Sample (1,ECw25(3),IEEE4)
+  Sample (1,ECw25(4),IEEE4)
+  Sample (1,ECw25(5),IEEE4)
+  Sample (1,ECw25(6),IEEE4)
+  Sample (1,x(1),IEEE4)
+  Sample (1,T(1),IEEE4)
+  Sample (1,de_dx_14011993(1),IEEE4)
+  Sample (1,dt(1),IEEE4)
+  Sample (1,dx(1),IEEE4)
+EndTable
+'-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.    -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
+BeginProg
+  Scan (15,Sec,0,0)
+    Signature
+    'Ask the sensors to send their data
+    SDI12Recorder (Sensor_1_Out,1,"A","M!",1.0,0)
+    SDI12Recorder (Sensor_2_Out,1,"C","M!",1.0,0)
+    SDI12Recorder (Sensor_3_Out,1,"E","M!",1.0,0)
+    SDI12Recorder (Sensor_4_Out,3,"P","M!",1.0,0)
+    SDI12Recorder (Sensor_5_Out,3,"R","M!",1.0,0)
+    SDI12Recorder (Sensor_6_Out,3,"S","M!",1.0,0)
+    Delay (0,500,mSec)
+    gis(1) = Signature
+    Signature
+    x(1) = raw_14011993 'Raw ADC at 70 MHz
+    T(1) = T_1 'Temperature in C
+    EC25(1) = EC25_1 'Bulk ec @ 25C
+    x(2) = raw_2
+    T(2) = T_2
+    EC25(2) = EC25_2
+    x(3) = raw_3
+    T(3) = T_3
+    EC25(3) = EC25_3
+    x(4) = raw_4
+    T(4) = T_4
+    EC25(4) = EC25_4
+    x(5) = raw_5
+    T(5) = T_5
+    EC25(5) = EC25_5
+    x(6) = raw_6
+    T(6) = T_6
+    EC25(6) = EC25_6
+    '-... .-. . -. -.. .- -...-. .- - --.. .. -. --. . .-..--- .- -.-....-..-.-...- -...-. .- - --.. .. -. --. . .-. ..- ... ..- . -.. ..-
+    For i = 1 To 6
+      de_dx_14011993() = 2*(2.887e-9*x()^3-2.08e-5*x()^2+5.276e-2*x()-43.39)*(3*2.887e-9*x()^2-2*2.08e-5*x()+5.276e-2) '% from current model
+      dt() = 20-T()
+      dx() = de_dT/de_dx_14011993()*dt()
+      x20() = x()+dx() 'normalize at 20C
+      '% ===== estimate water content -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.
+      If x20() < xC
+        Q() = m2*x20()+m1
+      Else
+        Q() = aH*EXP(bH*(x20()-xC))+Qmax
+      EndIf
+      '% ===== estimate pore water EC -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.
+      If Q() < uL
+        SR() = SR_min_14011993
+      ElseIf Q() >= uL AND Q() < uA
+        SR() = (r1*Q()^3+r2*Q()^2+r3*Q()+r4)/(Q()^3+s1*Q()^2+s2*Q()+s3)
+      ElseIf Q() >= uA
+        SR() = k2*Q()^2+k1*Q()+k0
+      EndIf
+      ECw25() = EC25()/SR()
+      gis(2) = Signature
+      Sensor_A = Q(1)
+      Sensor_C = Q(2)
+      Sensor_E = Q(3)
+      Sensor_P = Q(4)
+      Sensor_R = Q(5)
+      Sensor_S = Q(6)
+    Next
+    CallTable Diagnostic
+    CallTable RW_Moisture+EC
+  NextScan
+EndProg
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'1/10/2021
+'Brendan Fatzinger (brendan.fatzinger@usu.edu)
+'Teros 12 sensor in Rockwool.
