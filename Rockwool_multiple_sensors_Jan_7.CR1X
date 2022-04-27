@@ -1,6 +1,6 @@
 '1/7/2021
-'Brendan Fatzinger (brendan.fatzinger@usu.edu)
-'Teros 12 sensors in Rockwool.
+'Brendan Fatzinger (brendan.fatzinger@usu.edu) and Bruce Bugbee
+'Teros 12 sensors/crop steering/precision drought stress
 '-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.   -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
 SequentialMode
 Public Sensor_1_Out(3)
