@@ -2,7 +2,7 @@
 
 This program was created by Brendan Fatzinger and Bruce Bugbee (Utah State Univeristy; corresponding author: brendan.fatzinger@usu.edu), using calibration constants provided by Gaylon Campbell and Paolo Castiglione (Meter Group) to monitor volumetric water content and electrical conductivity with Teros 12 sensors (Meter Group) and CR1000/CR1000X dataloggers (Campbell Scientific, Inc.) for cannabis production and general crop steering. 
 
-This code can be easily modified to interface with other SDI12 soil moisture sensors and can accomodate custom calibration constants other than those provided. 
+This code can be easily modified to interface with other SDI12 soil moisture sensors and can accomodate custom calibration constants other than those provided in this library. 
 
 This work was supported by Meter Group. 
 
