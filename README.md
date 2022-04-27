@@ -4,6 +4,8 @@ This program was created by Brendan Fatzinger and Bruce Bugbee (Utah State Unive
 
 This code can be easily modified to interface with other SDI12 soil moisture sensors and can accomodate custom calibration constants other than those provided. 
 
+This work was supported by Meter Group. 
+
 Copy Right © 2022 Fatzinger and Bugbee. All rights reserved. 
 
 # Citation
