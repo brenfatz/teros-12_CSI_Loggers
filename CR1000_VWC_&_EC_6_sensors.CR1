@@ -16,7 +16,7 @@ Public Sensor_R
 Public Sensor_S
 Public Q(6) 'water content
 Public ECw25(6) '(dS/m) 'pore water EC at 25C
-Public EC25(6) ' bulk EC from sensor
+Public EC25(6) 'bulk EC from sensor
 Public dx(6)
 Public de_dx_14011993(6)
 Public x(6)
