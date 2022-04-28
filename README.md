@@ -12,7 +12,7 @@ Copy Right © 2022 Fatzinger and Bugbee. All rights reserved.
 
 This work is based on a publication. If is used in any way, in whole or in part, please include the following citation:
 
-Fatzinger, B. and Bugbee, B. (2022). Electromagnetic sensor-based precision drought stress in restriced media volumes.
+Fatzinger, B. and Bugbee, B. (2022). Electromagnetic sensor-based precision drought stress in restricted media volumes.
 Controlled Environments. Paper #. https://digitalcommons.usu.edu/cpl_env/#, documentation: https://github.com/brenfatz/teros-12_CSI_Loggers
 
 
