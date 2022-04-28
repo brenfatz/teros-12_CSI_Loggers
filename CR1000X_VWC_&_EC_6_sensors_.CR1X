@@ -1,4 +1,4 @@
-'Brendan Fatzinger (brendan.fatzinger@usu.edu) and Bruce Bugbee
+'Brendan Fatzinger (brendan.fatzinger@usu.edu) and Bruce Bugbee; 2022
 'Teros 12 sensors/crop steering/precision drought stress
 '-... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.     .--- .- -.   -... .-. . -. -.. .- -.   ..-. .- - --.. .. -. --. . .-.   ..- ... ..-   . -.. ..-
 SequentialMode
@@ -16,7 +16,7 @@ Public Sensor_J
 Public Sensor_K
 Public Sensor_L
 Public ECw25(6) '(dS/m) 'pore water EC at 25C
-Public EC25(6) ' bulk EC from sensor
+Public EC25(6) 'bulk EC from sensor
 Public dx(6)
 Public de_dx_14011993(6)
 Public x(6)
